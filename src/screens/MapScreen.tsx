@@ -1,24 +1,45 @@
 import React, { FC } from 'react';
-import { RefreshControl, ScrollView, Text, View } from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { useAppContext } from '../context/AppContext';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
 const MapScreen: FC<{}> = () => {
-  const { loading, loadNodes } = useAppContext();
+  const { loading } = useAppContext();
 
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl
-          refreshing={loading}
-          colors={['#000000', '#989348']}
-          onRefresh={() => loadNodes()}
-        />
-      }>
-      <View>
-        <Text>New App</Text>
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <MapView
+        showsPointsOfInterest={true}
+        showsCompass={false}
+        style={styles.map}
+        provider={PROVIDER_GOOGLE}
+        onRegionChangeComplete={region => {
+          console.log(region);
+        }}
+      />
+      {loading && (
+        <ActivityIndicator size={'large'} style={styles.activityIndicator} />
+      )}
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  activityIndicator: {
+    backgroundColor: '#FFFFFF8F',
+    borderRadius: 100,
+    padding: 5,
+  },
+});
 
 export default MapScreen;
