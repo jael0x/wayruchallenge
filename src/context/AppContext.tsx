@@ -1,15 +1,24 @@
 import React, {
   createContext,
+  createRef,
   useContext,
   FC,
   useState,
   useEffect,
-  Dispatch,
-  SetStateAction,
+  RefObject,
 } from 'react';
+import { Dimensions } from 'react-native';
 import HttpClient from '../lib/HttpClient';
-import { DEVICES } from '../lib/endpoints.json';
 import cities from '../lib/cities.json';
+import MapView, { Region } from 'react-native-maps';
+
+const { width, height } = Dimensions.get('window');
+const defaultLocation: Region = {
+  latitude: cities[0].lat,
+  longitude: cities[0].long,
+  latitudeDelta: 0.02,
+  longitudeDelta: 0.02 * (width / height),
+};
 
 interface CityOptionInterface {
   url: string;
@@ -17,18 +26,21 @@ interface CityOptionInterface {
   lat: number;
   long: number;
 }
+
 interface AppContextInterface {
   loading: boolean;
-  getDevices: () => void;
   selectedCity: CityOptionInterface;
-  setCity: Dispatch<SetStateAction<CityOptionInterface>>;
+  setCity: (city: CityOptionInterface) => void;
+  mapRef: RefObject<MapView>;
+  defaultLocation: Region;
 }
 
 const AppContext = createContext<AppContextInterface>({
   loading: false,
-  getDevices: () => {},
-  selectedCity: {} as CityOptionInterface,
+  selectedCity: cities[0] as CityOptionInterface,
   setCity: () => {},
+  mapRef: {} as RefObject<MapView>,
+  defaultLocation,
 });
 
 export const useAppContext = () => {
@@ -37,26 +49,39 @@ export const useAppContext = () => {
 
 export const AppContextProvider: FC<{}> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedCity, setCity] = useState<CityOptionInterface>({
+  const [selectedCity, setSelectedCity] = useState<CityOptionInterface>({
     ...cities[0],
   });
 
-  useEffect(() => {
-    getDevices();
-  }, []);
+  const mapRef = createRef<MapView>();
 
-  const getDevices = async () => {
+  useEffect(() => {
+    getDevices(selectedCity.url);
+  }, [selectedCity]);
+
+  const getDevices = async (url?: string) => {
     setLoading(true);
-    const response = await HttpClient.get(DEVICES);
+    const response = await HttpClient.get(`devices/${url || ''}`);
     console.log(response?.data);
     setLoading(false);
   };
 
+  const setCity = (city: CityOptionInterface) => {
+    setSelectedCity(city);
+    const cityLocation = {
+      ...defaultLocation,
+      latitude: city.lat,
+      longitude: city.long,
+    };
+    mapRef?.current?.animateToRegion(cityLocation);
+  };
+
   const value = {
     loading,
-    getDevices,
     selectedCity,
     setCity,
+    mapRef,
+    defaultLocation,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
