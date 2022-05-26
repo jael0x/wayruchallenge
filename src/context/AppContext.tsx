@@ -10,12 +10,12 @@ import { DEVICES } from '../lib/endpoints.json';
 
 interface AppContextInterface {
   loading: boolean;
-  loadNodes: () => void;
+  getDevices: () => void;
 }
 
 const AppContext = createContext<AppContextInterface>({
   loading: false,
-  loadNodes: () => {},
+  getDevices: () => {},
 });
 
 export const useAppContext = () => {
@@ -26,10 +26,10 @@ export const AppContextProvider: FC<{}> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    loadNodes();
+    getDevices();
   }, []);
 
-  const loadNodes = async () => {
+  const getDevices = async () => {
     setLoading(true);
     const response = await HttpClient.get(DEVICES);
     console.log(response?.data);
@@ -38,7 +38,7 @@ export const AppContextProvider: FC<{}> = ({ children }) => {
 
   const value = {
     loading,
-    loadNodes,
+    getDevices,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

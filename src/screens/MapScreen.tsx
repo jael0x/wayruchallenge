@@ -1,7 +1,16 @@
 import React, { FC } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
 import { useAppContext } from '../context/AppContext';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
+import cities from '../lib/cities.json';
+
+const { width, height } = Dimensions.get('window');
+const defaultLocation: Region = {
+  latitude: cities[0].lat,
+  longitude: cities[0].long,
+  latitudeDelta: 0.02,
+  longitudeDelta: 0.02 * (width / height),
+};
 
 const MapScreen: FC<{}> = () => {
   const { loading } = useAppContext();
@@ -13,6 +22,7 @@ const MapScreen: FC<{}> = () => {
         showsCompass={false}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
+        initialRegion={defaultLocation}
         onRegionChangeComplete={region => {
           console.log(region);
         }}
