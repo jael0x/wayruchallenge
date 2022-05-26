@@ -2,18 +2,19 @@ import React, { FC } from 'react';
 import { View, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
 import { useAppContext } from '../context/AppContext';
 import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
-import cities from '../lib/cities.json';
+import DropDown from '../components/CitiesDropDown';
 
 const { width, height } = Dimensions.get('window');
-const defaultLocation: Region = {
-  latitude: cities[0].lat,
-  longitude: cities[0].long,
-  latitudeDelta: 0.02,
-  longitudeDelta: 0.02 * (width / height),
-};
 
 const MapScreen: FC<{}> = () => {
-  const { loading } = useAppContext();
+  const { loading, selectedCity } = useAppContext();
+
+  const defaultLocation: Region = {
+    latitude: selectedCity.lat,
+    longitude: selectedCity.long,
+    latitudeDelta: 0.02,
+    longitudeDelta: 0.02 * (width / height),
+  };
 
   return (
     <View style={styles.container}>
@@ -27,6 +28,7 @@ const MapScreen: FC<{}> = () => {
           console.log(region);
         }}
       />
+      <DropDown />
       {loading && (
         <ActivityIndicator size={'large'} style={styles.activityIndicator} />
       )}

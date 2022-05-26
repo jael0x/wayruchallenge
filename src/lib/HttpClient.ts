@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosInstance } from 'axios';
 import { Alert } from 'react-native';
 
 const HttpClient: AxiosInstance = axios.create({
-  baseURL: 'https://devices-endpoint.herokuapp.com',
+  baseURL: 'https://devices-endpoint.herokuapp.com/',
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
