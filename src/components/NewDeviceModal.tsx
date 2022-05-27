@@ -1,16 +1,9 @@
 import React, { FC, useState } from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  TextInput,
-} from 'react-native';
+import { Modal, Button, View, Text, StyleSheet, TextInput } from 'react-native';
 import { DeviceInterface, useAppContext } from '../context/AppContext';
 
 const NewDeviceModal: FC<{}> = () => {
-  const { showNewDeviceModal, setShowNewDeviceModal, selectedCity } =
+  const { showNewDeviceModal, setShowNewDeviceModal, selectedCity, addDevice } =
     useAppContext();
 
   const defaultDevice = () => ({
@@ -37,7 +30,6 @@ const NewDeviceModal: FC<{}> = () => {
       visible={showNewDeviceModal}
       onRequestClose={onClose}>
       <View style={styles.centeredView}>
-        {console.log(newDevice)}
         <View style={styles.modalView}>
           <Text>Add a new device in {newDevice.city}</Text>
           <TextInput
@@ -60,9 +52,14 @@ const NewDeviceModal: FC<{}> = () => {
             placeholder="longitude"
             keyboardType="numeric"
           />
-          <Pressable onPress={onClose}>
-            <Text>Cancelar</Text>
-          </Pressable>
+          <View style={styles.buttonRow}>
+            <Button title="Cancel" color={'#6B6B6B'} onPress={onClose} />
+            <Button
+              title="Add Device"
+              color={'#5B18D7'}
+              onPress={() => addDevice(newDevice)}
+            />
+          </View>
         </View>
       </View>
     </Modal>
@@ -101,11 +98,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9F9F9',
     borderRadius: 5,
     height: 40,
-    margin: 12,
+    margin: 10,
     padding: 7,
   },
-  disabled: {
-    borderBottomColor: '#6B6B6B',
+  buttonRow: {
+    width: '80%',
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 });
 

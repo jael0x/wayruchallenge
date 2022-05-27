@@ -9,7 +9,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, Alert } from 'react-native';
 import HttpClient from '../lib/HttpClient';
 import cities from '../lib/cities.json';
 import MapView, { Region } from 'react-native-maps';
@@ -47,6 +47,7 @@ interface AppContextInterface {
   devices: Array<DeviceInterface>;
   showNewDeviceModal: boolean;
   setShowNewDeviceModal: Dispatch<SetStateAction<boolean>>;
+  addDevice: (device: DeviceInterface) => void;
 }
 
 const AppContext = createContext<AppContextInterface>({
@@ -58,6 +59,7 @@ const AppContext = createContext<AppContextInterface>({
   devices: [],
   showNewDeviceModal: false,
   setShowNewDeviceModal: () => {},
+  addDevice: () => {},
 });
 
 export const useAppContext = () => {
@@ -87,6 +89,17 @@ export const AppContextProvider: FC<{}> = ({ children }) => {
     setLoading(false);
   };
 
+  const addDevice = async (device: DeviceInterface) => {
+    setLoading(true);
+    const response = await HttpClient.post(DEVICES, device);
+    await getDevices(selectedCity.url);
+    setShowNewDeviceModal(false);
+    setLoading(false);
+    if (response.status === 201) {
+      Alert.alert('New device created!');
+    }
+  };
+
   const setCity = (city: CityOptionInterface) => {
     setSelectedCity(city);
     const cityLocation = {
@@ -106,6 +119,7 @@ export const AppContextProvider: FC<{}> = ({ children }) => {
     devices,
     showNewDeviceModal,
     setShowNewDeviceModal,
+    addDevice,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
