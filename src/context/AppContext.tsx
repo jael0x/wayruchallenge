@@ -6,6 +6,8 @@ import React, {
   useState,
   useEffect,
   RefObject,
+  Dispatch,
+  SetStateAction,
 } from 'react';
 import { Dimensions } from 'react-native';
 import HttpClient from '../lib/HttpClient';
@@ -15,8 +17,8 @@ import { DEVICES } from '../lib/endpoints.json';
 
 const { width, height } = Dimensions.get('window');
 const defaultLocation: Region = {
-  latitude: cities[0].lat,
-  longitude: cities[0].long,
+  latitude: parseFloat(cities[0].lat),
+  longitude: parseFloat(cities[0].long),
   latitudeDelta: 0.02,
   longitudeDelta: 0.02 * (width / height),
 };
@@ -24,16 +26,16 @@ const defaultLocation: Region = {
 interface CityOptionInterface {
   url: string;
   name: string;
-  lat: number;
-  long: number;
+  lat: string;
+  long: string;
 }
 
 export interface DeviceInterface {
   city: string;
-  lat: number;
-  long: number;
+  lat: string;
+  long: string;
   ssid: string;
-  _id: string;
+  _id?: string;
 }
 
 interface AppContextInterface {
@@ -43,6 +45,8 @@ interface AppContextInterface {
   mapRef: RefObject<MapView>;
   defaultLocation: Region;
   devices: Array<DeviceInterface>;
+  showNewDeviceModal: boolean;
+  setShowNewDeviceModal: Dispatch<SetStateAction<boolean>>;
 }
 
 const AppContext = createContext<AppContextInterface>({
@@ -52,6 +56,8 @@ const AppContext = createContext<AppContextInterface>({
   mapRef: {} as RefObject<MapView>,
   defaultLocation,
   devices: [],
+  showNewDeviceModal: false,
+  setShowNewDeviceModal: () => {},
 });
 
 export const useAppContext = () => {
@@ -61,6 +67,7 @@ export const useAppContext = () => {
 export const AppContextProvider: FC<{}> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [devices, setDevices] = useState<Array<DeviceInterface>>([]);
+  const [showNewDeviceModal, setShowNewDeviceModal] = useState<boolean>(false);
   const [selectedCity, setSelectedCity] = useState<CityOptionInterface>({
     ...cities[0],
   });
@@ -84,8 +91,8 @@ export const AppContextProvider: FC<{}> = ({ children }) => {
     setSelectedCity(city);
     const cityLocation = {
       ...defaultLocation,
-      latitude: city.lat,
-      longitude: city.long,
+      latitude: parseFloat(city.lat),
+      longitude: parseFloat(city.long),
     };
     mapRef?.current?.animateToRegion(cityLocation);
   };
@@ -97,6 +104,8 @@ export const AppContextProvider: FC<{}> = ({ children }) => {
     mapRef,
     defaultLocation,
     devices,
+    showNewDeviceModal,
+    setShowNewDeviceModal,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

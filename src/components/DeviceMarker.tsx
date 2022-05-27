@@ -12,8 +12,8 @@ const DeviceMarker: FC<{
     <Marker
       key={device._id}
       coordinate={{
-        latitude: device.lat,
-        longitude: device.long,
+        latitude: parseFloat(device.lat),
+        longitude: parseFloat(device.long),
       }}>
       <Image
         fadeDuration={0}

@@ -1,13 +1,16 @@
 import React, { FC } from 'react';
 import { TouchableHighlight, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { useAppContext } from '../context/AppContext';
 
 const FloatingAddButton: FC<{}> = () => {
+  const { setShowNewDeviceModal } = useAppContext();
+
   return (
     <TouchableHighlight
       style={styles.floatingButton}
       underlayColor={'#9D74E7'}
-      onPress={() => console.log('Add')}>
+      onPress={() => setShowNewDeviceModal(true)}>
       <Icon name="plus" size={30} color="#FFFFFF" />
     </TouchableHighlight>
   );

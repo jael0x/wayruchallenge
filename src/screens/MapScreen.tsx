@@ -5,9 +5,11 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import DropDown from '../components/CitiesDropDown';
 import DeviceMarker from '../components/DeviceMarker';
 import FloatingAddButton from '../components/FloatingAddButton';
+import NewDeviceModal from '../components/NewDeviceModal';
 
 const MapScreen: FC<{}> = () => {
-  const { loading, mapRef, defaultLocation, devices } = useAppContext();
+  const { loading, mapRef, defaultLocation, devices, showNewDeviceModal } =
+    useAppContext();
 
   return (
     <View style={styles.container}>
@@ -25,6 +27,7 @@ const MapScreen: FC<{}> = () => {
         <ActivityIndicator size={'large'} style={styles.activityIndicator} />
       )}
       <FloatingAddButton />
+      {showNewDeviceModal && <NewDeviceModal />}
     </View>
   );
 };
