@@ -11,6 +11,7 @@ import { Dimensions } from 'react-native';
 import HttpClient from '../lib/HttpClient';
 import cities from '../lib/cities.json';
 import MapView, { Region } from 'react-native-maps';
+import { DEVICES } from '../lib/endpoints.json';
 
 const { width, height } = Dimensions.get('window');
 const defaultLocation: Region = {
@@ -27,12 +28,21 @@ interface CityOptionInterface {
   long: number;
 }
 
+export interface DeviceInterface {
+  city: string;
+  lat: number;
+  long: number;
+  ssid: string;
+  _id: string;
+}
+
 interface AppContextInterface {
   loading: boolean;
   selectedCity: CityOptionInterface;
   setCity: (city: CityOptionInterface) => void;
   mapRef: RefObject<MapView>;
   defaultLocation: Region;
+  devices: Array<DeviceInterface>;
 }
 
 const AppContext = createContext<AppContextInterface>({
@@ -41,6 +51,7 @@ const AppContext = createContext<AppContextInterface>({
   setCity: () => {},
   mapRef: {} as RefObject<MapView>,
   defaultLocation,
+  devices: [],
 });
 
 export const useAppContext = () => {
@@ -49,6 +60,7 @@ export const useAppContext = () => {
 
 export const AppContextProvider: FC<{}> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [devices, setDevices] = useState<Array<DeviceInterface>>([]);
   const [selectedCity, setSelectedCity] = useState<CityOptionInterface>({
     ...cities[0],
   });
@@ -61,8 +73,10 @@ export const AppContextProvider: FC<{}> = ({ children }) => {
 
   const getDevices = async (url?: string) => {
     setLoading(true);
-    const response = await HttpClient.get(`devices/${url || ''}`);
-    console.log(response?.data);
+    const response = await HttpClient.get(`${DEVICES}/${url || ''}`);
+    if (Array.isArray(response?.data)) {
+      setDevices(response?.data as Array<DeviceInterface>);
+    }
     setLoading(false);
   };
 
@@ -82,6 +96,7 @@ export const AppContextProvider: FC<{}> = ({ children }) => {
     setCity,
     mapRef,
     defaultLocation,
+    devices,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

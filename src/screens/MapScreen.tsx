@@ -3,20 +3,24 @@ import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { useAppContext } from '../context/AppContext';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import DropDown from '../components/CitiesDropDown';
+import CustomMarker from '../components/CustomMarker';
+
+const deviceIcon = require('../resources/images/icon.png');
 
 const MapScreen: FC<{}> = () => {
-  const { loading, mapRef, defaultLocation } = useAppContext();
+  const { loading, mapRef, defaultLocation, devices } = useAppContext();
 
   return (
     <View style={styles.container}>
       <MapView
-        showsPointsOfInterest={true}
-        showsCompass={false}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
         initialRegion={defaultLocation}
-        ref={mapRef}
-      />
+        ref={mapRef}>
+        {devices.map(device => (
+          <CustomMarker key={device._id} device={device} source={deviceIcon} />
+        ))}
+      </MapView>
       <DropDown />
       {loading && (
         <ActivityIndicator size={'large'} style={styles.activityIndicator} />
