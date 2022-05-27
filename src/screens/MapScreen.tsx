@@ -4,6 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import DropDown from '../components/CitiesDropDown';
 import DeviceMarker from '../components/DeviceMarker';
+import FloatingAddButton from '../components/FloatingAddButton';
 
 const MapScreen: FC<{}> = () => {
   const { loading, mapRef, defaultLocation, devices } = useAppContext();
@@ -23,6 +24,7 @@ const MapScreen: FC<{}> = () => {
       {loading && (
         <ActivityIndicator size={'large'} style={styles.activityIndicator} />
       )}
+      <FloatingAddButton />
     </View>
   );
 };
