@@ -1,18 +1,13 @@
 import React, { FC } from 'react';
 import { DeviceInterface } from '../context/AppContext';
-import {
-  View,
-  StyleSheet,
-  Image,
-  Text,
-  ImageSourcePropType,
-} from 'react-native';
+import { View, StyleSheet, Image, Text } from 'react-native';
 import { Marker, Callout } from 'react-native-maps';
 
-const CustomMarker: FC<{
+const deviceIcon = require('../resources/images/icon.png');
+
+const DeviceMarker: FC<{
   device: DeviceInterface;
-  source: ImageSourcePropType;
-}> = ({ device, source }) => {
+}> = ({ device }) => {
   return (
     <Marker
       key={device._id}
@@ -23,7 +18,7 @@ const CustomMarker: FC<{
       <Image
         fadeDuration={0}
         style={styles.iconImage}
-        source={source}
+        source={deviceIcon}
         resizeMode="contain"
       />
       <Callout tooltip>
@@ -78,4 +73,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomMarker;
+export default DeviceMarker;
